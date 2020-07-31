@@ -15,6 +15,15 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 
 
+def make_static_dir():
+    if not os.path.exists(os.path.join(os.path.dirname(__file__), "static")):
+        os.mkdir(os.path.join(os.path.dirname(__file__), "static"))
+        subfolders = ["input", "output"]
+        for sf_name in subfolders:
+            os.makedirs(os.path.join("static", sf_name))
+    return
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -23,12 +32,14 @@ def index():
         files = request.files.getlist('file')
         if files[0].filename == '':
             return redirect(request.url)
+
+        make_static_dir()
         for file in files:
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
         imginp(os.path.join(app.config['UPLOAD_FOLDER'], files[0].filename),
                         os.path.join(app.config['UPLOAD_FOLDER'], files[1].filename))
-        return send_file('static/output/image.png', as_attachment=True, 
-                                            attachment_filename='processed-image.png', cache_timeout=0)
+        return send_file('static/output/image.jpg', as_attachment=True, 
+                                            attachment_filename='processed-image.jpg', cache_timeout=0)
     return render_template('index.html')
 
 

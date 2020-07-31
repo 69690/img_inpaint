@@ -1,9 +1,13 @@
 import os
+import sys
 import numpy as np
 import tensorflow as tf
 
+sys.path.append(os.path.abspath(os.path.join('..', 'img_inpaint')))
+import app
+
 from tensorflow import keras
-from pconv import PConv2D
+from .pconv import PConv2D
 from tensorflow.keras.models import model_from_json
 from PIL import Image
 
@@ -16,10 +20,9 @@ loaded_model = model_from_json(loaded_model_json, custom_objects={'PConv2D':PCon
 loaded_model.load_weights("modelRunner/model.h5")
 
 
-def clean_input():
+def clean_input_dir():
     # clean the input sub-dir in static
-    filelist = [ f for f in os.listdir("static/input/") if f.endswith(".png") or 
-                                                                f.endswith(".jpg") ]
+    filelist = [f for f in os.listdir("static/input/")]
     for f in filelist:
         os.remove(os.path.join("static/input/", f))
     return
@@ -54,11 +57,11 @@ def imginp(masked_image, mask):
     pred_img = val.reshape(val.shape[1:])
     fimg = Image.fromarray(pred_img, 'RGB')
 
-    clean_input()
+    clean_input_dir()
     return fimg.save("static/output/image.jpg", 'JPEG', quality=80)
 
 
 
 if __name__ == "__main__":
-    imginp("/Users/retro/Desktop/img_inpaint/modelRunner/masked_image.png",
-                    "/Users/retro/Desktop/img_inpaint/modelRunner/mask.png")
+    app.make_static_dir()
+    imginp("modelRunner/masked_image.png", "modelRunner/mask.png")
