@@ -1,7 +1,7 @@
 ev/
 *.png
+*.jpg
 content/
-__pycache__/
 *.pyc
-final_trained_model_test_main/
 .DS_Store
+temp/

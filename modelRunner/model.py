@@ -1,5 +1,5 @@
 from tensorflow import keras
-from .pconv import PConv2D
+from pconv import PConv2D
 
 
 class InpaintingModel:

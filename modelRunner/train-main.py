@@ -3,8 +3,8 @@ import os
 import tensorflow as tf
 
 from tensorflow import keras
-from .model import InpaintingModel
-from .augment import createAugment
+from model import InpaintingModel
+from augment import createAugment
 
 
 def dice_coef(y_true, y_pred):
@@ -27,10 +27,17 @@ model.compile(optimizer='adam', loss='mean_absolute_error', metrics=[dice_coef])
 
 if __name__ == "__main__":
     model.fit_generator(traingen, validation_data=testgen,
-            epochs=15,
+            epochs=2,
             steps_per_epoch=len(traingen),
             validation_steps=len(testgen),
             callbacks=[tf.keras.callbacks.ModelCheckpoint(filepath='model/content/model-{epoch:02d}.h5')]
     )
 
-    model.save(os.path.join(os.path.dirname(__file__),'final_trained_model_test_main.h5'))
+    # model.save(os.path.join(os.path.dirname(__file__),'final_trained_model_test_main.h5'))
+
+    model_json = model.to_json()
+    with open("modelRunner/model.json", "w") as json_file:
+        json_file.write(model_json)
+
+    model.save_weights("modelRunner/model.h5")
+    print("Saved model to disk")
